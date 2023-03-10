@@ -120,15 +120,3 @@ resource "aws_wafv2_web_acl" "owasp_web_acl" {
   }
 
 }
-
-# module "ecs_lb" {
-#     source = "../../env/test"
-
-#     var1 = ecs_lb.ecs_alb_arn
-# }
-
-# resource "aws_wafv2_web_acl_association" "owasp_web_assoc" {
-# #   resource_arn = aws_lb.nginx_alb.arn
-#   resource_arn = module.ecs_lb.ecs_alb_arn
-#   web_acl_arn  = aws_wafv2_web_acl.owasp_web_acl.arn
-# }

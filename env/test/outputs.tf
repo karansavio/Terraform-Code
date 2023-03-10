@@ -18,14 +18,8 @@ output "ecs_nginx_cluster_arn" {
     value = aws_ecs_cluster.nginx_cluster.arn
 }
 
-output "ipset_id" {
-  value = aws_wafv2_ip_set.ipset.id
-}
+output "ecs_alb_arn" {
 
-output "rate_limit_rule_group_id" {
-  value = aws_wafv2_rule_group.rule_group.id
-}
-
-output "rate_limit_rule_group_arn" {
-  value = aws_wafv2_rule_group.rule_group.arn
+  value = aws_lb.nginx_alb.arn
+  
 }

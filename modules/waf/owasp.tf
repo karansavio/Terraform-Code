@@ -51,7 +51,21 @@ resource "aws_wafv2_web_acl" "owasp_web_acl" {
   description = "Block OWASP Top 10 attacks"
 
   default_action {
-    allow {}
+    dynamic "allow" {
+      for_each = var.default_action == "allow" ? [1] : []
+      content {}
+    }
+
+    dynamic "block" {
+      for_each = var.default_action == "block" ? [1] : []
+      content {}
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "OWASP-Top-10-Metrics"
+    sampled_requests_enabled   = true
   }
 
   rule {
@@ -74,49 +88,44 @@ resource "aws_wafv2_web_acl" "owasp_web_acl" {
     }
   }
 
-  rule {
-    name     = "AWSManagedRulesCommonRuleSet"
-    priority = 1
+  dynamic "rule" {
+    for_each = var.managed_rules
+    content {
+      name     = rule.value.name
+      priority = rule.value.priority
 
-    override_action {
-      count {}
-    }
-
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesCommonRuleSet"
-        vendor_name = "AWS"
-        rule_action_override {
-          action_to_use {
-            count {}
-          }
-
-          name = "SizeRestrictions_QUERYSTRING"
+      override_action {
+        dynamic "none" {
+          for_each = rule.value.override_action == "none" ? [1] : []
+          content {}
         }
 
-        rule_action_override {
-          action_to_use {
-            count {}
-          }
-
-          name = "NoUserAgent_HEADER"
+        dynamic "count" {
+          for_each = rule.value.override_action == "count" ? [1] : []
+          content {}
         }
+      }
 
+      statement {
+        managed_rule_group_statement {
+          name        = rule.value.name
+          vendor_name = rule.value.vendor_name
+
+          dynamic "excluded_rule" {
+            for_each = rule.value.excluded_rules
+            content {
+              name = excluded_rule.value
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = rule.value.name
+        sampled_requests_enabled   = true
       }
     }
 
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWSManagedRulesCommonRuleSet"
-      sampled_requests_enabled   = true
-    }
-
   }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "OWASP-Top-10"
-    sampled_requests_enabled   = true
-  }
-
 }

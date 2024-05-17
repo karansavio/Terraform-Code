@@ -4,7 +4,7 @@
 terraform {
   backend "s3" {
     bucket = "my-terraform-state-ecs-fargate"
-    key    = "eu-west-1/Terraform-Sapia/terraform.tfstate"
+    key    = "eu-west-1/Terraform-Code/terraform.tfstate"
     region = "eu-west-1"
   }
 }

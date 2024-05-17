@@ -1,4 +1,4 @@
-# This is the Sapia Terraform Exercise. Author: Karan Choudhary
+# This is a Terraform Exercise. Author: Karan Choudhary
 
 Steps:
 
